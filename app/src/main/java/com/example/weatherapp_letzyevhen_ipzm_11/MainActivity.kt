@@ -26,7 +26,7 @@ import java.util.Locale
 class MainActivity : AppCompatActivity() {
 
     //private val CITY: String = "Kivertsi, 45200"
-    private val API: String = "8247137ac6330997ce14d5e1f985bcc5"
+    private val API: String = "..."
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
