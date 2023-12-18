@@ -36,6 +36,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </TextView>
+            <Spinner
+                android:id="@+id/citySpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <!--<Button
+                android:id="@+id/selectLocationButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Location"
+                android:onClick="onSelectLocationClicked" />-->
         </LinearLayout>
 
         <LinearLayout

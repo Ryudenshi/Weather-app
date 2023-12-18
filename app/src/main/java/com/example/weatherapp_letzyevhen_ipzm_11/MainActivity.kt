@@ -1,11 +1,18 @@
 package com.example.weatherapp_letzyevhen_ipzm_11
 
+import android.app.Activity
+import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
+import android.widget.Spinner
 import android.widget.TextView
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -18,17 +25,35 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    private val CITY: String = "Kivertsi, 45200"
+    //private val CITY: String = "Kivertsi, 45200"
     private val API: String = "8247137ac6330997ce14d5e1f985bcc5"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        WeatherTask().execute()
+        val citySpinner: Spinner = findViewById(R.id.citySpinner)
+        val citiesInUkraine = arrayOf("Kivertsi", "Lutsk", "Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro", "Zaporizhzhia")
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, citiesInUkraine)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        citySpinner.adapter = adapter
+
+        citySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedCity = citiesInUkraine[position]
+                WeatherTask().execute(selectedCity) // Pass selected city to WeatherTask
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Handle case when nothing is selected (if needed)
+            }
+        }
+
+        WeatherTask().execute(citiesInUkraine[0]) // Initially load weather for the first city
     }
 
-    inner class WeatherTask : AsyncTask<Void, Void, String>() {
+    inner class WeatherTask : AsyncTask<String, Void, String>() {
 
         override fun onPreExecute() {
             super.onPreExecute()
@@ -37,11 +62,12 @@ class MainActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.errortext).visibility = View.GONE
         }
 
-        override fun doInBackground(vararg p0: Void?): String? {
+        override fun doInBackground(vararg selectedCity: String): String? {
             var response: String? = null
 
             try {
-                val url = URL("https://api.openweathermap.org/data/2.5/weather?q=$CITY&units=metric&appid=$API")
+                val url = URL("https://api.openweathermap.org/data/2.5/weather?q=${selectedCity[0]},UA&units=metric&appid=$API")
+
                 val urlConnection = url.openConnection() as HttpURLConnection
                 val inputStream = urlConnection.inputStream
                 val bufferedReader = BufferedReader(InputStreamReader(inputStream))
@@ -120,3 +146,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
