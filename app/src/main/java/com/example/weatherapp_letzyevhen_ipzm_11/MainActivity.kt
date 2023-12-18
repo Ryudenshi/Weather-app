@@ -26,7 +26,7 @@ import java.util.Locale
 class MainActivity : AppCompatActivity() {
 
     //private val CITY: String = "Kivertsi, 45200"
-    private val API: String = "..."
+    private val API: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,15 +42,15 @@ class MainActivity : AppCompatActivity() {
         citySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedCity = citiesInUkraine[position]
-                WeatherTask().execute(selectedCity) // Pass selected city to WeatherTask
+                WeatherTask().execute(selectedCity)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Handle case when nothing is selected (if needed)
+                //
             }
         }
 
-        WeatherTask().execute(citiesInUkraine[0]) // Initially load weather for the first city
+        WeatherTask().execute(citiesInUkraine[0])
     }
 
     inner class WeatherTask : AsyncTask<String, Void, String>() {
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 response = stringBuilder.toString()
                 inputStream.close()
             } catch (e: Exception) {
-                e.printStackTrace() // Log the exception for debugging purposes
+                e.printStackTrace()
             }
 
             return response
