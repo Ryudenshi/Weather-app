@@ -31,13 +31,6 @@ class MainFragment : Fragment() {
     private val CITY_KEY = "CityKey"
     private lateinit var citySpinner: Spinner
     private lateinit var citiesInUkraine: Array<String>
-    private lateinit var loaderProgressBar: ProgressBar
-    private lateinit var mainContainerLayout: RelativeLayout
-    private lateinit var errorTextView: TextView
-    private lateinit var addressTextView: TextView
-    private lateinit var updatedAtTextView: TextView
-    private lateinit var statusTextView: TextView
-    private lateinit var buttonNavigateFragmentHistory: MaterialButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,13 +38,13 @@ class MainFragment : Fragment() {
     ): View? {
         val view: View = inflater.inflate(R.layout.fragment_main, container, false)
 
-        loaderProgressBar = view.findViewById(R.id.loader)
-        mainContainerLayout = view.findViewById(R.id.mainContainer)
-        errorTextView = view.findViewById(R.id.errortext)
-        addressTextView = view.findViewById(R.id.address)
-        updatedAtTextView = view.findViewById(R.id.updated_at)
-        statusTextView = view.findViewById(R.id.status)
-        buttonNavigateFragmentHistory = view.findViewById(R.id.buttonNavigateFragmentHistory)
+        val loaderProgressBar = view.findViewById<ProgressBar>(R.id.loader)
+        val mainContainerLayout = view.findViewById<RelativeLayout>(R.id.mainContainer)
+        val errorTextView = view.findViewById<TextView>(R.id.errortext)
+        val addressTextView = view.findViewById<TextView>(R.id.address)
+        val updatedAtTextView = view.findViewById<TextView>(R.id.updated_at)
+        val statusTextView = view.findViewById<TextView>(R.id.status)
+        val buttonNavigateFragmentHistory = view.findViewById<MaterialButton>(R.id.buttonNavigateFragmentHistory)
         citySpinner = view.findViewById(R.id.citySpinner)
         citiesInUkraine = arrayOf("Kivertsi", "Lutsk", "Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro", "Zaporizhzhia")
 
@@ -66,7 +59,7 @@ class MainFragment : Fragment() {
             val position = citiesInUkraine.indexOf(selectedCity)
             if (position != -1) {
                 citySpinner.setSelection(position)
-                WeatherTask().execute(selectedCity)
+                WeatherTask(view).execute(selectedCity)
             }
         }
 
@@ -78,7 +71,7 @@ class MainFragment : Fragment() {
                 editor.putString(CITY_KEY, selectedCity)
                 editor.apply()
 
-                WeatherTask().execute(selectedCity)
+                WeatherTask(requireView()).execute(selectedCity)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -90,17 +83,16 @@ class MainFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_historyActivity)
         }
 
-        WeatherTask().execute(citiesInUkraine[0])
         return view
     }
 
-    inner class WeatherTask : AsyncTask<String, Void, String>() {
+    inner class WeatherTask(private val view: View) : AsyncTask<String, Void, String>() {
 
         override fun onPreExecute() {
             super.onPreExecute()
-            loaderProgressBar.visibility = View.VISIBLE
-            mainContainerLayout.visibility = View.GONE
-            errorTextView.visibility = View.GONE
+            view.findViewById<ProgressBar>(R.id.loader).visibility = View.VISIBLE
+            view.findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.GONE
+            view.findViewById<TextView>(R.id.errortext).visibility = View.GONE
         }
 
         override fun doInBackground(vararg selectedCity: String): String? {
@@ -139,10 +131,11 @@ class MainFragment : Fragment() {
                     val weather = jsonObj.getJSONArray("weather").getJSONObject(0)
 
                     val updatedAt: Long = jsonObj.getLong("dt")
-                    val updatedAtText = "Updated at: " + SimpleDateFormat(
-                        "dd/MM/yyyy hh:mm a",
-                        Locale.ENGLISH
-                    ).format(Date(updatedAt * 1000))
+                    val updatedAtText =
+                        "Updated at: " + SimpleDateFormat(
+                            "dd/MM/yyyy hh:mm a",
+                            Locale.ENGLISH
+                        ).format(Date(updatedAt * 1000))
                     val temp = main.getString("temp") + "°C"
                     val tempMin = "Min temp: " + main.getString("temp_min") + "°C"
                     val tempMax = "Max temp: " + main.getString("temp_max") + "°C"
@@ -154,24 +147,35 @@ class MainFragment : Fragment() {
                     val windSpeed = wind.getString("speed")
                     val weatherDescription = weather.getString("description")
 
-                    addressTextView.text = jsonObj.getString("name") + ", " + sys.getString("country")
-                    updatedAtTextView.text = updatedAtText
-                    statusTextView.text = weatherDescription.capitalize()
+                    val address = jsonObj.getString("name") + ", " + sys.getString("country")
 
-                    loaderProgressBar.visibility = View.GONE
-                    mainContainerLayout.visibility = View.VISIBLE
+                    view.findViewById<TextView>(R.id.address).text = address
+                    view.findViewById<TextView>(R.id.updated_at).text = updatedAtText
+                    view.findViewById<TextView>(R.id.status).text = weatherDescription.capitalize()
+                    view.findViewById<TextView>(R.id.temp).text = temp
+                    view.findViewById<TextView>(R.id.temp_min).text = tempMin
+                    view.findViewById<TextView>(R.id.temp_max).text = tempMax
+                    view.findViewById<TextView>(R.id.sunrise).text =
+                        SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(Date(sunrise * 1000))
+                    view.findViewById<TextView>(R.id.sunset).text =
+                        SimpleDateFormat("hh:mm a", Locale.ENGLISH).format(Date(sunset * 1000))
+                    view.findViewById<TextView>(R.id.wind).text = windSpeed
+                    view.findViewById<TextView>(R.id.pressure).text = pressure
+                    view.findViewById<TextView>(R.id.humidity).text = humidity
+
+                    view.findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
+                    view.findViewById<RelativeLayout>(R.id.mainContainer).visibility = View.VISIBLE
                 } else {
-                    loaderProgressBar.visibility = View.GONE
-                    errorTextView.visibility = View.VISIBLE
-                    errorTextView.text = "Null response received"
+                    view.findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
+                    view.findViewById<TextView>(R.id.errortext).visibility = View.VISIBLE
+                    view.findViewById<TextView>(R.id.errortext).text = "Null response received"
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                loaderProgressBar.visibility = View.GONE
-                errorTextView.visibility = View.VISIBLE
-                errorTextView.text = "Error: ${e.message}"
+                view.findViewById<ProgressBar>(R.id.loader).visibility = View.GONE
+                view.findViewById<TextView>(R.id.errortext).visibility = View.VISIBLE
+                view.findViewById<TextView>(R.id.errortext).text = "Error: ${e.message}"
             }
         }
     }
 }
-
