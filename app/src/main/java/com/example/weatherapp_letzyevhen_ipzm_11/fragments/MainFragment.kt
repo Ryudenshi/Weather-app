@@ -45,11 +45,13 @@ class MainFragment : Fragment() {
     ): View? {
         val view: View = inflater.inflate(R.layout.fragment_main, container, false)
 
+        loaderProgressBar = view.findViewById(R.id.loader)
+        mainContainerLayout = view.findViewById(R.id.mainContainer)
+        errorTextView = view.findViewById(R.id.errortext)
+        addressTextView = view.findViewById(R.id.address)
+        updatedAtTextView = view.findViewById(R.id.updated_at)
+        statusTextView = view.findViewById(R.id.status)
         buttonNavigateFragmentHistory = view.findViewById(R.id.buttonNavigateFragmentHistory)
-
-        buttonNavigateFragmentHistory.setOnClickListener{
-            Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_historyActivity)
-        }
         citySpinner = view.findViewById(R.id.citySpinner)
         citiesInUkraine = arrayOf("Kivertsi", "Lutsk", "Kyiv", "Lviv", "Odesa", "Kharkiv", "Dnipro", "Zaporizhzhia")
 
@@ -84,12 +86,9 @@ class MainFragment : Fragment() {
             }
         }
 
-        loaderProgressBar = view.findViewById(R.id.loader)
-        mainContainerLayout = view.findViewById(R.id.mainContainer)
-        errorTextView = view.findViewById(R.id.errortext)
-        addressTextView = view.findViewById(R.id.address)
-        updatedAtTextView = view.findViewById(R.id.updated_at)
-        statusTextView = view.findViewById(R.id.status)
+        buttonNavigateFragmentHistory.setOnClickListener{
+            Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_historyActivity)
+        }
 
         WeatherTask().execute(citiesInUkraine[0])
         return view
@@ -175,3 +174,4 @@ class MainFragment : Fragment() {
         }
     }
 }
+
