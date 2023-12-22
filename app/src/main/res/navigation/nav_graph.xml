@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/historyActivity"
+        android:name="com.example.weatherapp_letzyevhen_ipzm_11.fragments.HistoryActivity"
+        android:label="fragment_history_activity"
+        tools:layout="@layout/fragment_history_activity" >
+        <action
+            android:id="@+id/action_historyActivity_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.weatherapp_letzyevhen_ipzm_11.fragments.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_historyActivity"
+            app:destination="@id/historyActivity" />
+    </fragment>
+</navigation>
