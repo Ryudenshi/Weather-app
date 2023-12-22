@@ -20,6 +20,4 @@ data class HistoryItem(
             return historyList
         }
     }
-
-    // Other functions and properties for your HistoryItem class
 }
