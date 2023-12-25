@@ -11,11 +11,11 @@ data class HistoryItem(
             val historyList = mutableListOf<HistoryItem>()
             val jsonArray = JSONArray(jsonString)
             for (i in 0 until jsonArray.length()) {
-            val jsonObj = jsonArray.getJSONObject(i)
-            val cityName = jsonObj.getString("cityName")
-            val requestTime = jsonObj.getLong("requestTime")
-            val historyItem = HistoryItem(cityName, requestTime)
-            historyList.add(historyItem)
+                val jsonObj = jsonArray.getJSONObject(i)
+                val cityName = jsonObj.getString("name")
+                val requestTime = jsonObj.getLong("timestamp")
+                val historyItem = HistoryItem(cityName, requestTime)
+                historyList.add(historyItem)
             }
             return historyList
         }
